@@ -8,7 +8,7 @@ const signIn = async (req,res) => {
     //Avoid repeated user
     const {email} = req.body;
     const doesUserExist =  await User.findOne({email})
-
+    console.log("ACA")
     if (doesUserExist) {
         const error = new Error("email already registered")
         return res.status(400).json({msg: error.message})
@@ -56,6 +56,7 @@ const authUser = async (req,res) => {
 }
 
 const confirmUser = async (req, res) => {
+    //before auth
     const { token } = req.params
     const user = await User.findOne({token});
     if (!user){
@@ -122,8 +123,21 @@ const genNewPassword = async (req,res) => {
     } catch (error) {
         console.log(`error: ${error.message}`)    
     }
-    
-    
 }
 
-export { signIn, authUser, confirmUser, forgotPassword, verifyToken, genNewPassword} 
+const profile = async (req, res) => {
+    const {user} = req
+    await res.status(200).json(user)
+    
+    
+}   
+
+export { 
+    signIn, 
+    authUser, 
+    confirmUser, 
+    forgotPassword, 
+    verifyToken, 
+    genNewPassword,
+    profile,
+} 
