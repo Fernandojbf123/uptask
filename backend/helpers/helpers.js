@@ -19,4 +19,4 @@ export const formatMoney = (number) =>{
         style: 'currency', 
         currency:'USD'
     })
-  }
+}
