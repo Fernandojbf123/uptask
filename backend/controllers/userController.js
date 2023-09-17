@@ -76,14 +76,12 @@ const confirmUser = async (req, res) => {
 
 const forgotPassword = async (req,res) => {
     const {email} = req.body;
-    const user = await User.findOne({email});
-
-    if (!user){
-        const error = new Error("The user does not exist")
-        return res.status(403).json({msg: error.message})
-    }
-
     try {
+        const user = await User.findOne({email});
+        if (!user){
+            const error = new Error("The user does not exist")
+            return res.status(403).json({msg: error.message})
+        }
         user.token = generateID();
         await user.save()
         res.status(200).json({msg: "We have sent you an email with the instructions to reset your password"})
@@ -92,5 +90,40 @@ const forgotPassword = async (req,res) => {
     }
 }
 
+const verifyToken = async (req,res) => {
+    const { token } = req.params
+    try {
+        const user = await User.findOne({token})
+        if (!user) {
+            const error = new Error("The token is not valid")
+            return res.status(403).json({msg: error.message})
+        }
+        res.status(200).json({
+            msg: "Token valid"
+        })
+    } catch (error) {
+        console.log(`error: ${error.message}`)    
+    }
+}
 
-export { signIn, authUser, confirmUser, forgotPassword} 
+const genNewPassword = async (req,res) => {
+    const {token} = req.params;
+    const {password} = req.body;
+    try {
+        const user = await User.findOne({token})
+        if (!user) {
+            const error = new Error("The token is not valid")
+            return res.status(403).json({msg: error.message})
+        }
+        user.password = password;
+        user.token = "";
+        await user.save()
+        res.status(200).json({msg: "Password reset OK!"})
+    } catch (error) {
+        console.log(`error: ${error.message}`)    
+    }
+    
+    
+}
+
+export { signIn, authUser, confirmUser, forgotPassword, verifyToken, genNewPassword} 
