@@ -141,3 +141,5 @@ export {
     genNewPassword,
     profile,
 } 
+
+//User MVC terminado
